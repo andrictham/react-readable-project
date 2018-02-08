@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import { addPostRequest } from '../actions'
+import { addPostRequest, getPostRequest } from '../actions'
 import {
 	Flex,
 	Box,
@@ -27,8 +27,13 @@ class EditPost extends Component {
 		})
 	}
 
+	componentDidMount() {
+		const { match, getPostRequest } = this.props
+		getPostRequest(match.params.id)
+	}
+
 	render() {
-		const { addPostRequest } = this.props
+		const { addPostRequest, currentPost } = this.props
 		return (
 			<Flex>
 				<Box w={1} p={3} bg={BG_TOP}>
@@ -61,6 +66,7 @@ class EditPost extends Component {
 						<Label mt={2}>Body</Label>
 						<Textarea
 							id="postBody"
+							defaultValue={this.props.currentPost.body}
 							value={this.state.postBody}
 							onChange={this.onChange}
 							mt={2}
@@ -95,14 +101,13 @@ class EditPost extends Component {
 }
 
 const mapDispatchToProps = dispatch => {
-	return bindActionCreators({ addPostRequest }, dispatch)
+	return bindActionCreators({ addPostRequest, getPostRequest }, dispatch)
 }
 
-const mapStateToProps = ({ posts }) => {
-	const postsArray = Object.keys(posts).map(key => {
-		return posts[key]
-	})
-	return { posts: postsArray }
+const mapStateToProps = ({ currentPost }) => {
+	return {
+		currentPost,
+	}
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(EditPost)
